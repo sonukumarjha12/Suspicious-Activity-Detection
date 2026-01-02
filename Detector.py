@@ -8,14 +8,12 @@ class Detector:
         self.modelPath = modelPath
         self.classesPath = classesPath
 
-        # Load the model
         self.net = cv2.dnn_DetectionModel(self.modelPath, self.configPath)
         self.net.setInputSize(320, 320)
         self.net.setInputScale(1.0 / 127.5)
         self.net.setInputMean((127.5, 127.5, 127.5))
         self.net.setInputSwapRB(True)
 
-        # Load the classes
         self.readClasses()
 
     def readClasses(self):
@@ -25,7 +23,6 @@ class Detector:
         print(self.classesList)
 
     def onVideo(self, use_webcam=False):
-        # Access the webcam if use_webcam is True, otherwise use the video file
         cap = cv2.VideoCapture(0) if use_webcam else cv2.VideoCapture(self.videoPath)
 
         if not cap.isOpened():
@@ -49,14 +46,12 @@ class Detector:
 
                     x, y, w, h = bbox
 
-                    # Generate a random color based on the class label ID
                     color = (int(classLabelID * 37 % 255), int(classLabelID * 67 % 255), int(classLabelID * 97 % 255))
 
                     cv2.rectangle(image, (x, y), (x + w, y + h), color=color, thickness=2)
                     cv2.putText(image, f'{classLabel}: {classConfidence:.2f}', (x, y - 10),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
 
-                    # Check if the detected object is a knife
                     if classLabel.lower() == "knife":
                         alert_text = "ALERT! Something violent detected. Please have a look."
                         cv2.putText(image, alert_text, (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
@@ -71,3 +66,4 @@ class Detector:
 
         cap.release()
         cv2.destroyAllWindows()
+
